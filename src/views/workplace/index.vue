@@ -240,9 +240,41 @@ const handleDrop = (e:DragEvent) => {
 
             <!-- 中间：核心编辑画布区 -->
              <section class="center-board">
-                <!-- 真正的画布（以后这里会根据设定的大屏尺寸按比例缩放 -->
+
+                <!-- 外层滚动包裹区 -->
+                 <div class="scroll-wrapper">
+                    <!-- 左上角固定块+顶部水平标尺 -->
+                     <div class="ruler-corner"></div>
+                     <!-- 顶部标尺宽度跟随pinia的画布宽度 -->
+                      <div class="ruler-x" :style="{ width:editorStore.canvasConfig.width + 'px' }">
+                        <!-- 纯前端动态生成刻度数字，每100px一个 -->
+                         <span
+                            v-for="n in Math.ceil(editorStore.canvasConfig.width / 100) + 1"
+                            :key="'x' + n"
+                            class="tick-label-x"
+                            :style="{ left: (n-1)*100 + 'px' }"
+                         >{{ (n-1)*100 }}</span>
+                      </div>
+                 </div>
+
+                 <!-- 左侧垂直标尺 -->
+                 <div class="canvas-row">
+                    <!-- 左侧标尺的高度跟随pinia里的画布高度 -->
+                     <div class="ruler-y" :style="{ height: editorStore.canvasConfig.height + 'px' }">
+                        <span
+                            v-for="n in Math.ceil(editorStore.canvasConfig.height / 100) + 1"
+                            :key="'y' + n"
+                            class="tick-label-y"
+                            :style="{ top: (n-1)*100 + 'px' }"
+                        >{{ (n-1)*100 }}</span>
+                     </div>
+                <!-- 真正的画布 -->
                 <div 
                     class="canvas-area" 
+                    :style="{ 
+                    width: editorStore.canvasConfig.width + 'px', 
+                    height: editorStore.canvasConfig.height + 'px' 
+                }"
                     @dragover.prevent 
                     @drop="handleDrop" 
                     @mousedown.self="editorStore.setCurComponent(null)"
@@ -292,6 +324,7 @@ const handleDrop = (e:DragEvent) => {
                      </div>
                 </div>
             </div>
+        </div>
         </section>
 
              <!-- 右侧：属性配置面板 -->
@@ -374,17 +407,107 @@ const handleDrop = (e:DragEvent) => {
     display: flex;
     font-display: column;
 }
-.center-board{
+/* =========== 核心画布区域布局 =========== */
+.center-board {
     flex: 1;
     background-color: #0f1011;
-    position: relative; overflow: auto;
-    display: flex; justify-content: center; align-items: center;
+    position: relative; 
+    overflow: auto; /* 保证容器出现滚动条 */
 }
-/* 模拟大屏的画布 */
-.canvas-area{
-    width: 800px; height: 500px;
-    background-color: #2a2a2a;
-    box-shadow: 0 0 10pa rgba(0, 0, 0, 0.5); position: relative;
+
+.scroll-wrapper {
+    display: inline-block; /* 极其关键：让包裹层随内部内容撑开 */
+    padding: 40px; /* 让画布周围有留白空间，不会贴着边 */
+}
+
+/* =========== 标尺行与列的 Flex 布局 =========== */
+.ruler-row {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.canvas-row {
+    display: flex;
+}
+
+/* 左上角空白交叉处 */
+.ruler-corner {
+    width: 20px;
+    height: 20px;
+    background-color: #1a1a1c;
+    position: sticky;
+    left: 0;
+    z-index: 1000;
+    border-right: 1px solid #3c3c3c;
+    border-bottom: 1px solid #3c3c3c;
+}
+
+/*  X 轴标尺 (顶部)  */
+.ruler-x {
+    height: 20px;
+    background-color: #1a1a1c;
+    border-bottom: 1px solid #3c3c3c;
+    overflow: hidden;
+    /* 利用css重复线性渐变画出刻度线 */
+    background-image:
+        repeating-linear-gradient(90deg, #555 0, #555 1px, transparent 1px, transparent 10px),
+        repeating-linear-gradient(90deg, #888 0, #888 1px, transparent 1px, transparent 50px);
+    background-size: 100% 4px, 100% 8px; /* 刻度的高度：短线4px，长线8px */
+    background-position: left bottom, left bottom;
+    background-repeat: no-repeat, no-repeat;
+}
+
+/*  Y 轴标尺 (左侧)  */
+.ruler-y {
+    width: 20px;
+    background-color: #1a1a1c;
+    position: sticky;
+    left: 0;
+    z-index: 998;
+    border-right: 1px solid #3c3c3c;
+    overflow: hidden;
+    background-image:
+        repeating-linear-gradient(180deg, #555 0, #555 1px, transparent 1px, transparent 10px),
+        repeating-linear-gradient(180deg, #888 0, #888 1px, transparent 1px, transparent 50px);
+    background-size: 4px 100%, 8px 100%;
+    background-position: right top, right top;
+    background-repeat: no-repeat, no-repeat;
+}
+
+/* 标尺上的数字标签 */
+.tick-label-x {
+    position: absolute;
+    top: 1px;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #777;
+    user-select: none;
+}
+
+.tick-label-y {
+    position: absolute;
+    left: 2px;
+    transform: translateY(-50%) rotate(-90deg); /* 翻转 Y 轴数字，更还原大屏编辑器 */
+    font-size: 10px;
+    color: #777;
+    user-select: none;
+    white-space: nowrap;
+}
+
+/*  真正的画布区域  */
+.canvas-area {
+    /* 这里去掉了原本写死的 1920x1080，因为我们在 template 里用 style 动态绑定了 */
+    background-color: #1a1a1a;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    /* 原有的网格背景保留，刚好和 100px 的刻度完美对齐 */
+    background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    overflow: hidden;
 }
 .right-panel{
     width: 300px; background-color: #1d1e1f;
@@ -470,16 +593,6 @@ const handleDrop = (e:DragEvent) => {
 }
 .delete-icon:hover{
     transform: scale(1.2); background-color: #ff7875;
-}
-/* 改造中间的画布容器 */
-.canvas-area{
-    width: 1920px; height: 1080px; background-color: #1a1a1a;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); position: relative;
-    background-image:
-        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-    background-size: 20px 20px;
-    overflow: hidden;
 }
 
 </style>

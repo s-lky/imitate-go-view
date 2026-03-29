@@ -35,7 +35,7 @@
       <div class="content-body">
         <div class="project-grid">
           <!-- 这里循环的数据换成了 paginatedList（分页后的数据） -->
-          <div class="project-card" v-for="item in paginatedList" :key="item.id">
+          <div class="project-card" v-for="item in paginatedList" :key="item.id" :class="{'menu-active':activeMenuId === item.id}">
             <!-- 新增点击事件 @click="openPreview" -->
             <div class="card-image" @click="openPreview(item)" title="点击放大预览">
               <img v-if="item.image" :src="item.image" alt="preview" class="real-image" />
@@ -296,9 +296,10 @@ const editProject = (id: number) => router.push({ path: '/editor', query: { id: 
   border-radius: 8px; 
   border: 1px solid var(--border-color); 
   /* 注意：为了让下拉菜单不被切断，卡片不能用 overflow: hidden，我们把圆角移到内部元素上 */
-  transition: transform 0.2s, box-shadow 0.2s; 
+  transition: transform 0.2s, box-shadow 0.2s; position: relative; z-index: 1;
 }
-.project-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); }
+.project-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); z-index: 5; }
+.project-card.menu-active {z-index: 10;}
 
 .card-image {
   height: 160px; background-color: var(--bg-image-area); 

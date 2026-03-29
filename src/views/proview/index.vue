@@ -49,7 +49,7 @@ onUnmounted(() => {
   <div class="preview-viewport">
     <button class="back-btn" @click="router.push('/')">🔙 返回编辑器</button>
 
-    <!-- 这块才是真正的大屏画布！它的宽高永远固定是 1920x1080 -->
+    <!-- 宽高固定是 1920x1080 -->
     <!-- 利用 scale 进行缩放，利用 translate(-50%, -50%) 把它永远钉在屏幕正中间 -->
     <div 
       class="canvas-screen"
@@ -94,7 +94,7 @@ onUnmounted(() => {
   /* 这里的 transform 已经在 inline-style 里动态绑定了 */
   transform-origin: center center;
   background-color: #0f1011;
-  /* 加个隐约的边框和发光，让你清楚看到画布的边界 */
+  /* 边框和发光 */
   box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
   border: 1px solid rgba(0, 229, 255, 0.1);
 }
