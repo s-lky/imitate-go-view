@@ -4,7 +4,7 @@ const router = createRouter({
     history:createWebHistory(),
     routes:[
     {
-        path:'/',
+        path:'/editor',
         name:'Workspace',
         component:()=>import('../views/workplace/index.vue')
     },
@@ -12,7 +12,12 @@ const router = createRouter({
         path:'/preview',
         name:'Preview',
         component:() => import('../views/proview/index.vue')
-        }
+    },
+    {
+        path:'/',
+        name:'ProjectList',
+        component:() => import('../views/project/index.vue')
+    },
     ]
 })
 
