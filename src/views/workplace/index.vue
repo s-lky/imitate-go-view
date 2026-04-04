@@ -4,10 +4,18 @@ import VBarChart from '../../packages/VBarChart.vue';
 import VLineChart from '../../packages/VLineChart.vue';
 import DataConfigPanel from '../../components/DataConfigPanel.vue';
 import { useRouter } from 'vue-router';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, nextTick, ref } from 'vue';
 import './index.css' // 导入独立的 CSS 文件
 
 const router = useRouter()
+const isLayoutReady = ref(false)
+
+onMounted(() => {
+    // 确保 DOM 渲染完成后再显示布局
+    nextTick(() => {
+        isLayoutReady.value = true
+    })
+})
 
 // 处理键盘删除事件
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -212,7 +220,7 @@ const handleDrop = (e: DragEvent) => {
 </script>
 
 <template>
-    <div class="workspace-container">
+    <div class="workspace-container" v-if="isLayoutReady">
         <!-- 顶部工具栏 -->
          <header class="header">
             <div class="logo"> My Go-View </div>

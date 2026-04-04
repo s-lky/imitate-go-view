@@ -21,10 +21,14 @@
     display: flex;
     flex: 1;
     overflow: hidden;
+    min-width: 0;
 }
 
 .left-panel{
     width: 250px;
+    flex-shrink: 0; /* 防止被压缩 */
+    overflow: hidden;
+    flex-wrap: nowrap;
     background-color: #1d1e1f;
     border-right: 1px solid #000;
     display: flex;
@@ -133,7 +137,11 @@
     overflow: hidden;
 }
 .right-panel{
-    width: 300px; background-color: #1d1e1f;
+    width: 300px;
+    flex-shrink: 0; /* 防止被压缩 */
+    background-color: #1d1e1f;
+    overflow: hidden;
+    flex-wrap: nowrap;
     border-left: 1px solid #000;
 }
 .panel-title{
