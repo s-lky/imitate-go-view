@@ -2,6 +2,15 @@
 import { useEidtorStore } from '../../store/editor';
 import VBarChart from '../../packages/VBarChart.vue';
 import VLineChart from '../../packages/VLineChart.vue';
+import VText from '../../packages/VText.vue';
+import VPieChart from '../../packages/VPieChart.vue';
+import VScatterChart from '../../packages/VScatterChart.vue';
+import VWordCloud from '../../packages/VWordCloud.vue';
+import VFunnelChart from '../../packages/VFunnelChart.vue';
+import VAreaChart from '../../packages/VAreaChart.vue';
+import VRadarChart from '../../packages/VRadarChart.vue';
+import VHeatmapChart from '../../packages/VHeatmapChart.vue';
+import VTreeChart from '../../packages/VTreeChart.vue';
 import DataConfigPanel from '../../components/DataConfigPanel.vue';
 import { useRouter } from 'vue-router';
 import { onMounted, onUnmounted, ref } from 'vue';
@@ -224,6 +233,15 @@ const editorStore = useEidtorStore()
 const componentMap: Record<string,any> = {
     VBarChart,
     VLineChart,
+    VText,
+    VPieChart,
+    VScatterChart,
+    VWordCloud,
+    VFunnelChart,
+    VAreaChart,
+    VRadarChart,
+    VHeatmapChart,
+    VTreeChart,
 }
 
 //左侧拖拽开始把“我是谁”这个信息存入包裹里
@@ -293,7 +311,15 @@ const handleDrop = (e: DragEvent) => {
              <aside class="left-panel">
                 <div class="panel-title">图表组件库</div>
                 <div class="component-list">
-                    <!-- 加上draggable="true"并在拖拽时开始塞入包裹 -->
+                    <!-- 文本组件 -->
+                     <div 
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VText')"
+                     >
+                     文本
+                     </div>
+                    <!-- 柱状图 -->
                      <div 
                         class="mock-item"
                         draggable="true"
@@ -301,12 +327,77 @@ const handleDrop = (e: DragEvent) => {
                      >
                      柱状图
                      </div>
+                     <!-- 折线图 -->
                      <div
                         class="mock-item"
                         draggable="true"
                         @dragstart="handleDragStart($event,'VLineChart')"
                      >
                         折线图
+                     </div>
+                     <!-- 饼图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VPieChart')"
+                     >
+                        饼图
+                     </div>
+                     <!-- 散点图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VScatterChart')"
+                     >
+                        散点图
+                     </div>
+                     <!-- 词云图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VWordCloud')"
+                     >
+                        词云图
+                     </div>
+                     <!-- 漏斗图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VFunnelChart')"
+                     >
+                        漏斗图
+                     </div>
+                     <!-- 面积图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VAreaChart')"
+                     >
+                        面积图
+                     </div>
+                     <!-- 雷达图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VRadarChart')"
+                     >
+                        雷达图
+                     </div>
+                     <!-- 热力图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VHeatmapChart')"
+                     >
+                        热力图
+                     </div>
+                     <!-- 树形图 -->
+                     <div
+                        class="mock-item"
+                        draggable="true"
+                        @dragstart="handleDragStart($event,'VTreeChart')"
+                     >
+                        树形图
                      </div>
                 </div>
             </aside>
