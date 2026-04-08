@@ -11,6 +11,9 @@ export interface ComponentMeta {
     component: Component;
     icon?: string;
     category?: 'chart' | 'text' | 'custom';
+    displayName?: string;      // 中文显示名称
+    thumbnail?: string;        // 缩略图占位符类型
+    variant?: string;          // 变体标识
     // 用于动态加载的记录
     remoteUrl?: string; 
     loadedAt?: number;

@@ -1,13 +1,42 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+// 导入所有组件
 import VBarChart from '../../packages/VBarChart.vue'
+import VBarChartGrouped from '../../packages/VBarChartGrouped.vue'
+import VBarChartStacked from '../../packages/VBarChartStacked.vue'
+import VBarChartHorizontal from '../../packages/VBarChartHorizontal.vue'
+import VBarChartCapsule from '../../packages/VBarChartCapsule.vue'
+import VBarChartLine from '../../packages/VBarChartLine.vue'
 import VLineChart from '../../packages/VLineChart.vue'
+import VLineChartSmooth from '../../packages/VLineChartSmooth.vue'
+import VLineChartArea from '../../packages/VLineChartArea.vue'
+import VPieChart from '../../packages/VPieChart.vue'
+import VPieChartMulti from '../../packages/VPieChartMulti.vue'
+import VPieChartDonut from '../../packages/VPieChartDonut.vue'
+import VText from '../../packages/VText.vue'
+import VTextGradient from '../../packages/VTextGradient.vue'
+import VTextScroll from '../../packages/VTextScroll.vue'
+import VScatterChart from '../../packages/VScatterChart.vue'
+import VWordCloud from '../../packages/VWordCloud.vue'
+import VFunnelChart from '../../packages/VFunnelChart.vue'
+import VAreaChart from '../../packages/VAreaChart.vue'
+import VRadarChart from '../../packages/VRadarChart.vue'
+import VHeatmapChart from '../../packages/VHeatmapChart.vue'
+import VTreeChart from '../../packages/VTreeChart.vue'
 import type { ComponentDataConfig } from '../../types/component'
 import './index.css' // 导入独立的 CSS 文件
+import '../workplace/index.css' // 导入动画样式
 
 const router = useRouter()
-const componentMap: Record<string, any> = { VBarChart, VLineChart }
+// 注册所有组件到映射表
+const componentMap: Record<string, any> = {
+  VBarChart, VBarChartGrouped, VBarChartStacked, VBarChartHorizontal, VBarChartCapsule, VBarChartLine,
+  VLineChart, VLineChartSmooth, VLineChartArea,
+  VPieChart, VPieChartMulti, VPieChartDonut,
+  VText, VTextGradient, VTextScroll,
+  VScatterChart, VWordCloud, VFunnelChart, VAreaChart, VRadarChart, VHeatmapChart, VTreeChart
+}
 
 const componentData = ref<any[]>([])
 // 假设我们的设计稿就是 1920 * 1080
@@ -65,11 +94,15 @@ onUnmounted(() => {
         v-for="item in componentData"
         :key="item.id"
         class="preview-component"
+        :class="{ 
+          [`anim-${item.animation?.type}-${item.animation?.name}`]: item.animation?.name 
+        }"
         :style="{
           left: item.style.left + 'px',
           top: item.style.top + 'px',
           width: item.style.width + 'px',
-          height: item.style.height + 'px'
+          height: item.style.height + 'px',
+          '--anim-duration': (item.animation?.duration || 1) + 's'
         }"
       >
         <component 

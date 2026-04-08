@@ -21,12 +21,111 @@ const customComponentName = ref('')
 const customComponentUrl = ref('')
 const customComponents = ref<Array<{name: string; url: string}>>([])
 
+// 动画相关状态
+const showEmphasis = ref(true)
+const showEntrance = ref(true)
+
+// 强调动画列表
+const emphasisAnimations = [
+  { name: 'bounce', label: '弹跳' },
+  { name: 'flash', label: '闪烁' },
+  { name: 'pulse', label: '放大缩小' },
+  { name: 'rubber-band', label: '放大缩小弹簧' },
+  { name: 'shake-x', label: '左右晃动' },
+  { name: 'swing', label: '扇形摇摆' },
+  { name: 'tada', label: '放大晃动缩小' },
+  { name: 'wobble', label: '左右上下晃动' },
+  { name: 'jello', label: '扇形摇摆' },
+]
+
+// 移入动画列表
+const entranceAnimations = [
+  { name: 'fade-in', label: '渐显' },
+  { name: 'slide-in-right', label: '向右进入' },
+  { name: 'slide-in-left', label: '向左进入' },
+  { name: 'slide-in-top', label: '向上进入' },
+  { name: 'slide-in-bottom', label: '向下进入' },
+  { name: 'slide-long-right', label: '向右长距进入' },
+  { name: 'slide-long-left', label: '向左长距进入' },
+  { name: 'slide-long-top', label: '向上长距进入' },
+  { name: 'slide-long-bottom', label: '向下长距进入' },
+  { name: 'rotate-in', label: '旋转进入' },
+  { name: 'rotate-cw', label: '左顺时针旋转' },
+  { name: 'rotate-ccw', label: '右逆时针旋转' },
+  { name: 'bounce-in', label: '弹入' },
+  { name: 'bounce-in-right', label: '向右弹入' },
+  { name: 'bounce-in-left', label: '向左弹入' },
+  { name: 'bounce-in-top', label: '向上弹入' },
+  { name: 'bounce-in-bottom', label: '向下弹入' },
+  { name: 'speed-in-right', label: '光速从右进入' },
+  { name: 'speed-in-left', label: '光速从左进入' },
+]
+
+// 切换动画分组展开/收起
+const toggleEmphasis = () => { showEmphasis.value = !showEmphasis.value }
+const toggleEntrance = () => { showEntrance.value = !showEntrance.value }
+
+// 应用动画到组件
+const applyAnimation = (type: 'emphasis' | 'entrance', name: string) => {
+  if (!editorStore.curComponent) return
+  
+  // 如果点击的是已选中的动画，则清除
+  if (editorStore.curComponent.animation?.type === type && editorStore.curComponent.animation?.name === name) {
+    clearAnimation()
+    return
+  }
+  
+  editorStore.curComponent.animation = {
+    type,
+    name,
+    duration: 1,
+    loop: type === 'emphasis'
+  }
+}
+
+// 清除动画
+const clearAnimation = () => {
+  if (editorStore.curComponent) {
+    editorStore.curComponent.animation = undefined
+  }
+}
+
 // 计算属性：获取所有已注册的组件
 // 依赖 version 响应式触发器，确保注册后 UI 能自动更新
 const registeredComponents = computed(() => {
   // 读取 version 建立依赖关系
   const _version = registry.getVersion().value
   return registry.list()
+})
+
+// 左侧组件库相关状态
+// 分类导航状态
+const activeCategory = ref('all')
+
+// 搜索关键词
+const searchKeyword = ref('')
+
+// 视图模式：list 或 grid
+const viewMode = ref('list')
+
+// 计算属性：根据分类和搜索过滤组件
+const filteredComponents = computed(() => {
+  let result = registeredComponents.value
+  
+  // 按分类过滤
+  if (activeCategory.value !== 'all') {
+    result = result.filter(item => item.category === activeCategory.value)
+  }
+  
+  // 按关键词搜索
+  if (searchKeyword.value) {
+    const keyword = searchKeyword.value.toLowerCase()
+    result = result.filter(item => 
+      (item.displayName || item.icon || '').toLowerCase().includes(keyword)
+    )
+  }
+  
+  return result
 })
 
 // 同步到 localStorage 的辅助函数（用于持久化已加载的自定义组件元数据）
@@ -95,12 +194,28 @@ onMounted(async () => {
   window.addEventListener('keydown', handleKeyDown)
   
   // ========== 组件注册中心：静态注册所有内置组件 ==========
-  // 动态 import 所有内置组件
+  // 动态 import 所有内置组件及其变体
   const modules = await Promise.all([
+    // 柱状图系列
     import('../../packages/VBarChart.vue'),
+    import('../../packages/VBarChartGrouped.vue'),
+    import('../../packages/VBarChartStacked.vue'),
+    import('../../packages/VBarChartHorizontal.vue'),
+    import('../../packages/VBarChartCapsule.vue'),
+    import('../../packages/VBarChartLine.vue'),
+    // 折线图系列
     import('../../packages/VLineChart.vue'),
-    import('../../packages/VText.vue'),
+    import('../../packages/VLineChartSmooth.vue'),
+    import('../../packages/VLineChartArea.vue'),
+    // 饼图系列
     import('../../packages/VPieChart.vue'),
+    import('../../packages/VPieChartMulti.vue'),
+    import('../../packages/VPieChartDonut.vue'),
+    // 文本系列
+    import('../../packages/VText.vue'),
+    import('../../packages/VTextGradient.vue'),
+    import('../../packages/VTextScroll.vue'),
+    // 其他图表
     import('../../packages/VScatterChart.vue'),
     import('../../packages/VWordCloud.vue'),
     import('../../packages/VFunnelChart.vue'),
@@ -110,19 +225,35 @@ onMounted(async () => {
     import('../../packages/VTreeChart.vue'),
   ])
   
-  // 批量注册到 Registry（添加中文显示名称）
+  // 批量注册到 Registry（添加中文显示名称、缩略图类型、变体标识）
   registry.registerBatch([
-    { name: 'VBarChart', component: modules[0].default, meta: { icon: '柱状图', category: 'chart' } },
-    { name: 'VLineChart', component: modules[1].default, meta: { icon: '折线图', category: 'chart' } },
-    { name: 'VText', component: modules[2].default, meta: { icon: '文本', category: 'text' } },
-    { name: 'VPieChart', component: modules[3].default, meta: { icon: '饼图', category: 'chart' } },
-    { name: 'VScatterChart', component: modules[4].default, meta: { icon: '散点图', category: 'chart' } },
-    { name: 'VWordCloud', component: modules[5].default, meta: { icon: '词云图', category: 'chart' } },
-    { name: 'VFunnelChart', component: modules[6].default, meta: { icon: '漏斗图', category: 'chart' } },
-    { name: 'VAreaChart', component: modules[7].default, meta: { icon: '面积图', category: 'chart' } },
-    { name: 'VRadarChart', component: modules[8].default, meta: { icon: '雷达图', category: 'chart' } },
-    { name: 'VHeatmapChart', component: modules[9].default, meta: { icon: '热力图', category: 'chart' } },
-    { name: 'VTreeChart', component: modules[10].default, meta: { icon: '树形图', category: 'chart' } },
+    // 柱状图系列
+    { name: 'VBarChart', component: modules[0].default, meta: { icon: '柱状图', category: 'chart', displayName: '柱状图', thumbnail: 'bar', variant: 'default' } },
+    { name: 'VBarChartGrouped', component: modules[1].default, meta: { icon: '并列柱状图', category: 'chart', displayName: '并列柱状图', thumbnail: 'bar', variant: 'grouped' } },
+    { name: 'VBarChartStacked', component: modules[2].default, meta: { icon: '堆叠柱状图', category: 'chart', displayName: '堆叠柱状图', thumbnail: 'bar', variant: 'stacked' } },
+    { name: 'VBarChartHorizontal', component: modules[3].default, meta: { icon: '横向柱状图', category: 'chart', displayName: '横向柱状图', thumbnail: 'bar', variant: 'horizontal' } },
+    { name: 'VBarChartCapsule', component: modules[4].default, meta: { icon: '胶囊柱状图', category: 'chart', displayName: '胶囊柱状图', thumbnail: 'bar', variant: 'capsule' } },
+    { name: 'VBarChartLine', component: modules[5].default, meta: { icon: '柱状折线图', category: 'chart', displayName: '柱状 & 折线图', thumbnail: 'bar', variant: 'line' } },
+    // 折线图系列
+    { name: 'VLineChart', component: modules[6].default, meta: { icon: '折线图', category: 'chart', displayName: '折线图', thumbnail: 'line', variant: 'default' } },
+    { name: 'VLineChartSmooth', component: modules[7].default, meta: { icon: '平滑折线图', category: 'chart', displayName: '平滑折线图', thumbnail: 'line', variant: 'smooth' } },
+    { name: 'VLineChartArea', component: modules[8].default, meta: { icon: '面积折线图', category: 'chart', displayName: '面积折线图', thumbnail: 'line', variant: 'area' } },
+    // 饼图系列
+    { name: 'VPieChart', component: modules[9].default, meta: { icon: '饼图', category: 'chart', displayName: '饼图', thumbnail: 'pie', variant: 'default' } },
+    { name: 'VPieChartMulti', component: modules[10].default, meta: { icon: '饼图多环', category: 'chart', displayName: '饼图多环', thumbnail: 'pie', variant: 'multi' } },
+    { name: 'VPieChartDonut', component: modules[11].default, meta: { icon: '环形图', category: 'chart', displayName: '环形图', thumbnail: 'pie', variant: 'donut' } },
+    // 文本系列
+    { name: 'VText', component: modules[12].default, meta: { icon: '文本', category: 'text', displayName: '普通文本', thumbnail: 'text', variant: 'default' } },
+    { name: 'VTextGradient', component: modules[13].default, meta: { icon: '渐变文本', category: 'text', displayName: '渐变文本', thumbnail: 'text', variant: 'gradient' } },
+    { name: 'VTextScroll', component: modules[14].default, meta: { icon: '弹幕文本', category: 'text', displayName: '弹幕文本', thumbnail: 'text', variant: 'scroll' } },
+    // 其他图表
+    { name: 'VScatterChart', component: modules[15].default, meta: { icon: '散点图', category: 'chart', displayName: '散点图', thumbnail: 'scatter', variant: 'default' } },
+    { name: 'VWordCloud', component: modules[16].default, meta: { icon: '词云图', category: 'chart', displayName: '词云图', thumbnail: 'cloud', variant: 'default' } },
+    { name: 'VFunnelChart', component: modules[17].default, meta: { icon: '漏斗图', category: 'chart', displayName: '漏斗图', thumbnail: 'funnel', variant: 'default' } },
+    { name: 'VAreaChart', component: modules[18].default, meta: { icon: '面积图', category: 'chart', displayName: '面积图', thumbnail: 'area', variant: 'default' } },
+    { name: 'VRadarChart', component: modules[19].default, meta: { icon: '雷达图', category: 'chart', displayName: '雷达图', thumbnail: 'radar', variant: 'default' } },
+    { name: 'VHeatmapChart', component: modules[20].default, meta: { icon: '热力图', category: 'chart', displayName: '热力图', thumbnail: 'heatmap', variant: 'default' } },
+    { name: 'VTreeChart', component: modules[21].default, meta: { icon: '树形图', category: 'chart', displayName: '树形图', thumbnail: 'tree', variant: 'default' } },
   ])
   
   // 恢复自定义组件并等待注册完成
@@ -447,26 +578,96 @@ const handleDrop = (e: DragEvent) => {
 
             <!-- 左侧：图表物料库 -->
              <aside class="left-panel">
-                <div class="panel-title">
-                  图表组件库
-                  <button class="add-custom-btn" @click="showCustomComponentDialog = true" title="添加自定义组件">+</button>
+                <!-- 左侧分类导航 -->
+                <div class="category-nav">
+                  <div 
+                    class="nav-item" 
+                    :class="{ active: activeCategory === 'all' }"
+                    @click="activeCategory = 'all'"
+                  >
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7"/>
+                      <rect x="14" y="3" width="7" height="7"/>
+                      <rect x="3" y="14" width="7" height="7"/>
+                      <rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                    <span>所有</span>
+                  </div>
+                  <div 
+                    class="nav-item" 
+                    :class="{ active: activeCategory === 'chart' }"
+                    @click="activeCategory = 'chart'"
+                  >
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="20" x2="18" y2="10"/>
+                      <line x1="12" y1="20" x2="12" y2="4"/>
+                      <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                    <span>图表</span>
+                  </div>
+                  <div 
+                    class="nav-item" 
+                    :class="{ active: activeCategory === 'text' }"
+                    @click="activeCategory = 'text'"
+                  >
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="4 7 4 4 20 4 20 7"/>
+                      <line x1="9" y1="20" x2="15" y2="20"/>
+                      <line x1="12" y1="4" x2="12" y2="20"/>
+                    </svg>
+                    <span>文本</span>
+                  </div>
                 </div>
-                <div class="component-list" v-if="isRegistryReady">
-                    <!-- 动态渲染所有已注册的组件 -->
-                     <div 
-                        v-for="item in registeredComponents"
-                        :key="item.name"
-                        class="mock-item"
-                        draggable="true"
-                        @dragstart="handleDragStart($event, item.name)"
-                        :title="item.remoteUrl ? '自定义组件' : '内置组件'"
-                        :class="{ 'custom-item': item.remoteUrl }"
-                     >
-                        {{ item.icon }}
-                     </div>
-                </div>
-                <div class="component-list" v-else>
-                    <div class="mock-item" style="justify-content: center; color: #666;">加载中...</div>
+                
+                <!-- 右侧组件列表面板 -->
+                <div class="component-list-panel">
+                  <!-- 顶部搜索和视图切换 -->
+                  <div class="list-header">
+                    <input 
+                      type="text" 
+                      placeholder="搜索组件" 
+                      v-model="searchKeyword" 
+                    />
+                    <div class="view-toggle">
+                      <button 
+                        :class="{ active: viewMode === 'list' }" 
+                        @click="viewMode = 'list'"
+                        title="列表视图"
+                      >☰</button>
+                      <button 
+                        :class="{ active: viewMode === 'grid' }" 
+                        @click="viewMode = 'grid'"
+                        title="网格视图"
+                      >⊞</button>
+                    </div>
+                    <button class="add-custom-btn" @click="showCustomComponentDialog = true" title="添加自定义组件">+</button>
+                  </div>
+                  
+                  <!-- 组件列表 -->
+                  <div class="component-list" :class="viewMode" v-if="isRegistryReady">
+                    <div 
+                      v-for="item in filteredComponents" 
+                      :key="item.name"
+                      class="component-card"
+                      draggable="true"
+                      @dragstart="handleDragStart($event, item.name)"
+                      :title="item.remoteUrl ? '自定义组件' : '内置组件'"
+                      :class="{ 'custom-item': item.remoteUrl }"
+                    >
+                      <!-- 占位图 -->
+                      <div class="component-thumbnail" :class="item.thumbnail">
+                        <div class="placeholder-icon"></div>
+                      </div>
+                      <!-- 组件名称 -->
+                      <div class="component-name">{{ item.displayName || item.icon }}</div>
+                    </div>
+                    <div v-if="filteredComponents.length === 0" class="empty-state">
+                      暂无匹配的组件
+                    </div>
+                  </div>
+                  <div class="component-list" :class="viewMode" v-else>
+                    <div class="empty-state">加载中...</div>
+                  </div>
                 </div>
             </aside>
 
@@ -522,12 +723,16 @@ const handleDrop = (e: DragEvent) => {
                             v-for="item in editorStore.componentData"
                             :key="item.id"
                             class="shape-component"
-                            :class="{ active:editorStore.curComponent?.id === item.id }"
+                            :class="{ 
+                                active: editorStore.curComponent?.id === item.id,
+                                [`anim-${item.animation?.type}-${item.animation?.name}`]: item.animation?.name
+                            }"
                             :style="{
                                 left:item.style.left + 'px',
                                 top:item.style.top + 'px',
                                 width:item.style.width + 'px',
                                 height:item.style.height + 'px',
+                                '--anim-duration': (item.animation?.duration || 1) + 's'
                             }"
                             @mousedown="handleMouseDown($event,item)"
                             @click.stop
@@ -713,9 +918,49 @@ const handleDrop = (e: DragEvent) => {
 
                   <!-- 动画选项卡内容 -->
                   <div v-show="activeTab === 'animation'" class="tab-content">
-                    <div class="empty-state">
-                      <div class="empty-icon"></div>
-                      <p>动画效果即将上线</p>
+                    <!-- 清除动画按钮 -->
+                    <div class="config-section">
+                      <button class="btn-clear-animation" @click="clearAnimation" :disabled="!editorStore.curComponent?.animation?.name">
+                        清除动画
+                      </button>
+                    </div>
+
+                    <!-- 强调动画 -->
+                    <div class="animation-group">
+                      <div class="animation-group-title" @click="toggleEmphasis">
+                        <span>强调动画</span>
+                        <span class="arrow" :class="{ open: showEmphasis }">▼</span>
+                      </div>
+                      <div class="animation-grid" v-show="showEmphasis">
+                        <button 
+                          v-for="anim in emphasisAnimations" 
+                          :key="anim.name"
+                          class="animation-btn"
+                          :class="{ active: editorStore.curComponent?.animation?.name === anim.name && editorStore.curComponent?.animation?.type === 'emphasis' }"
+                          @click="applyAnimation('emphasis', anim.name)"
+                        >
+                          {{ anim.label }}
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- 移入动画 -->
+                    <div class="animation-group">
+                      <div class="animation-group-title" @click="toggleEntrance">
+                        <span>移入动画</span>
+                        <span class="arrow" :class="{ open: showEntrance }">▼</span>
+                      </div>
+                      <div class="animation-grid" v-show="showEntrance">
+                        <button 
+                          v-for="anim in entranceAnimations" 
+                          :key="anim.name"
+                          class="animation-btn"
+                          :class="{ active: editorStore.curComponent?.animation?.name === anim.name && editorStore.curComponent?.animation?.type === 'entrance' }"
+                          @click="applyAnimation('entrance', anim.name)"
+                        >
+                          {{ anim.label }}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </template>

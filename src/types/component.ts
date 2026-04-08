@@ -4,6 +4,14 @@ export interface ApiFieldMapping {
     yField: string;  // Y 轴映射字段
 }
 
+// 动画配置接口
+export interface AnimationConfig {
+    type: 'emphasis' | 'entrance' | '' // 动画类型：强调动画 / 移入动画
+    name: string // 动画名称
+    duration: number // 动画时长（秒）
+    loop?: boolean // 是否循环播放（仅强调动画）
+}
+
 export interface ComponentDataConfig {
     type: 'static' | 'api';
     // 静态数据配置
@@ -21,6 +29,7 @@ export interface ComponentDataConfig {
     xField: string;
     yField: string;
 }
+
 export interface EditorComponent {
   id: string;
   component: string;
@@ -29,4 +38,6 @@ export interface EditorComponent {
   propValue: {
     title: string;
   };
+  // 动画配置
+  animation?: AnimationConfig;
 }

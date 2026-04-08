@@ -19,18 +19,354 @@
 }
 .workspace-container .main-content{
     display: grid;
-    grid-template-columns: 250px 1fr 300px;
+    grid-template-columns: 320px 1fr 300px;
     flex: 1;
     overflow: hidden;
 }
 
+/* =========== 左侧组件库 - 两栏布局 =========== */
 .workspace-container .left-panel{
-    width: 250px;
+    width: 320px;
     background-color: #1d1e1f;
     border-right: 1px solid #000;
     display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+/* 左侧分类导航 */
+.category-nav {
+    width: 70px;
+    background: #1a1a1c;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    border-right: 1px solid #333;
+    flex-shrink: 0;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+}
+
+.nav-item:hover {
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item.active {
+    color: #00e5ff;
+    background: rgba(0, 229, 255, 0.1);
+    border-left: 2px solid #00e5ff;
+}
+
+.nav-item svg {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 4px;
+}
+
+.nav-item span {
+    font-size: 11px;
+}
+
+/* 右侧组件列表面板 */
+.component-list-panel {
+    flex: 1;
+    display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-width: 0;
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    gap: 8px;
+    background: #1a1a1c;
+}
+
+.list-header input {
+    flex: 1;
+    padding: 6px 10px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+    outline: none;
+}
+
+.list-header input:focus {
+    border-color: #00e5ff;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 4px;
+}
+
+.view-toggle button {
+    width: 28px;
+    height: 28px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #888;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.view-toggle button:hover {
+    color: #ccc;
+    border-color: #888;
+}
+
+.view-toggle button.active {
+    background: rgba(0, 229, 255, 0.2);
+    border-color: #00e5ff;
+    color: #00e5ff;
+}
+
+.add-custom-btn {
+    width: 28px;
+    height: 28px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #00e5ff;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-custom-btn:hover {
+    background: #00e5ff;
+    color: #000;
+}
+
+/* 组件列表 */
+.component-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* 列表视图 */
+.component-list.list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.component-list.list .component-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #2a2a2a;
+    border-radius: 6px;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.component-list.list .component-card:hover {
+    background: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 229, 255, 0.3);
+}
+
+.component-list.list .component-card .component-thumbnail {
+    width: 80px;
+    height: 50px;
+    margin-right: 12px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+.component-list.list .component-card .component-name {
+    text-align: left;
+}
+
+/* 网格视图 */
+.component-list.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.component-list.grid .component-card {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: #2a2a2a;
+    border-radius: 6px;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.component-list.grid .component-card:hover {
+    background: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 229, 255, 0.3);
+}
+
+/* 自定义组件样式 */
+.component-card.custom-item {
+    background: rgba(0, 229, 255, 0.05);
+    border: 1px dashed rgba(0, 229, 255, 0.3);
+}
+
+.component-card.custom-item:hover {
+    background: rgba(0, 229, 255, 0.1);
+}
+
+/* 组件卡片缩略图占位符 */
+.component-thumbnail {
+    width: 100%;
+    height: 80px;
+    background: #1a1a1c;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.component-thumbnail::before {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #00e5ff 0%, #0066ff 100%);
+    border-radius: 8px;
+    opacity: 0.3;
+}
+
+.component-thumbnail.bar::before {
+    background: linear-gradient(135deg, #00e5ff 0%, #0066ff 100%);
+}
+
+.component-thumbnail.line::before {
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+}
+
+.component-thumbnail.pie::before {
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd93d 0%, #ff6b6b 100%);
+}
+
+.component-thumbnail.text::before {
+    width: 30px;
+    height: 4px;
+    background: #00e5ff;
+    border-radius: 2px;
+}
+
+.component-thumbnail.scatter::before {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00e5ff;
+    box-shadow: 
+        -12px -12px 0 #ff6b6b,
+        12px -12px 0 #ffd93d,
+        -12px 12px 0 #4ecdc4,
+        12px 12px 0 #95e1d3;
+}
+
+.component-thumbnail.cloud::before {
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.component-thumbnail.funnel::before {
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    background: linear-gradient(135deg, #00e5ff 0%, #0066ff 100%);
+}
+
+.component-thumbnail.area::before {
+    background: linear-gradient(135deg, #00e5ff 0%, #0066ff 100%);
+    clip-path: polygon(0% 100%, 0% 60%, 25% 40%, 50% 70%, 75% 30%, 100% 50%, 100% 100%);
+}
+
+.component-thumbnail.radar::before {
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    background: linear-gradient(135deg, #ffd93d 0%, #ff6b6b 100%);
+}
+
+.component-thumbnail.heatmap::before {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 50%, #4ecdc4 100%);
+}
+
+.component-thumbnail.tree::before {
+    clip-path: polygon(50% 0%, 80% 100%, 20% 100%);
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+}
+
+.placeholder-icon {
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 229, 255, 0.5);
+    border-radius: 4px;
+    z-index: 1;
+}
+
+/* 组件名称 */
+.component-name {
+    font-size: 12px;
+    color: #ccc;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 空状态 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* 滚动条样式 */
+.component-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.component-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.component-list::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+}
+
+.component-list::-webkit-scrollbar-thumb:hover {
+    background: #888;
 }
 /* =========== 核心画布区域布局 =========== */
 .workspace-container .center-board {
@@ -371,43 +707,6 @@
     font-size: 14px;
     text-align: center;
 }
-.workspace-container .panel-title{
-    padding: 10px; font-weight: bold;
-    border-bottom: 1px solid #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* 添加自定义组件按钮 */
-.add-custom-btn {
-    width: 24px;
-    height: 24px;
-    background: rgba(0, 229, 255, 0.1);
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    border-radius: 4px;
-    color: #00e5ff;
-    font-size: 16px;
-    line-height: 1;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.add-custom-btn:hover {
-    background: #00e5ff;
-    color: #000;
-}
-
-/* 自定义组件样式 */
-.mock-item.custom-item {
-    background: rgba(0, 229, 255, 0.1);
-    border: 1px dashed rgba(0, 229, 255, 0.3);
-}
-.workspace-container .mock-item{
-    margin: 10px; padding: 10px;
-    background: #333; text-align: center;
-    cursor: grab; border-radius: 4px;
-}
 /* 画布内组件的通用样式 */
 /* 颜色交给内部的 vue 组件了，不用在 css 里写颜色 */
 .workspace-container .shape-component {
@@ -712,4 +1011,649 @@
 
 .fade-enter-from, .fade-leave-to {
     opacity: 0;
+}
+
+/* ========== 动画效果系统 ==========
+/* 清除动画按钮 */
+.btn-clear-animation {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 77, 79, 0.1);
+    border: 1px solid rgba(255, 77, 79, 0.3);
+    border-radius: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
+}
+
+.btn-clear-animation:hover:not(:disabled) {
+    background: #ff4d4f;
+    color: #fff;
+}
+
+.btn-clear-animation:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* 动画分组 */
+.animation-group {
+    margin-bottom: 16px;
+}
+
+.animation-group-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+}
+
+.animation-group-title:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.animation-group-title .arrow {
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.animation-group-title .arrow.open {
+    transform: rotate(180deg);
+}
+
+/* 动画网格 */
+.animation-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+/* 动画按钮 */
+.animation-btn {
+    padding: 8px 4px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #ccc;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.animation-btn:hover {
+    background: #444;
+    border-color: #00e5ff;
+    color: #00e5ff;
+}
+
+.animation-btn.active {
+    background: rgba(0, 229, 255, 0.2);
+    border-color: #00e5ff;
+    color: #00e5ff;
+}
+
+/* ========== CSS 动画关键帧 ========== */
+/* 强调动画 - 循环播放 */
+.anim-emphasis-bounce {
+    animation: bounce var(--anim-duration, 1s) infinite;
+}
+
+.anim-emphasis-flash {
+    animation: flash var(--anim-duration, 1s) infinite;
+}
+
+.anim-emphasis-pulse {
+    animation: pulse var(--anim-duration, 1s) infinite;
+}
+
+.anim-emphasis-rubber-band {
+    animation: rubber-band var(--anim-duration, 1s) infinite;
+}
+
+.anim-emphasis-shake-x {
+    animation: shake-x var(--anim-duration, 1s) infinite;
+}
+
+.anim-emphasis-swing {
+    animation: swing var(--anim-duration, 1s) infinite;
+    transform-origin: top center;
+}
+
+.anim-emphasis-tada {
+    animation: tada var(--anim-duration, 1s) infinite;
+}
+
+.anim-emphasis-wobble {
+    animation: wobble var(--anim-duration, 1s) infinite;
+}
+
+.anim-emphasis-jello {
+    animation: jello var(--anim-duration, 1s) infinite;
+}
+
+/* 移入动画 - 播放一次 */
+.anim-entrance-fade-in {
+    animation: fade-in var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-in-right {
+    animation: slide-in-right var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-in-left {
+    animation: slide-in-left var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-in-top {
+    animation: slide-in-top var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-in-bottom {
+    animation: slide-in-bottom var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-long-right {
+    animation: slide-long-right var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-long-left {
+    animation: slide-long-left var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-long-top {
+    animation: slide-long-top var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-slide-long-bottom {
+    animation: slide-long-bottom var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-rotate-in {
+    animation: rotate-in var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-rotate-cw {
+    animation: rotate-cw var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-rotate-ccw {
+    animation: rotate-ccw var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-bounce-in {
+    animation: bounce-in var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-bounce-in-right {
+    animation: bounce-in-right var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-bounce-in-left {
+    animation: bounce-in-left var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-bounce-in-top {
+    animation: bounce-in-top var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-bounce-in-bottom {
+    animation: bounce-in-bottom var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-speed-in-right {
+    animation: speed-in-right var(--anim-duration, 1s) forwards;
+}
+
+.anim-entrance-speed-in-left {
+    animation: speed-in-left var(--anim-duration, 1s) forwards;
+}
+
+/* ========== 强调动画关键帧 ========== */
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0, 0, 0);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    40%, 43% {
+        transform: translate3d(0, -30px, 0);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+    70% {
+        transform: translate3d(0, -15px, 0);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+    90% {
+        transform: translate3d(0, -4px, 0);
+    }
+}
+
+@keyframes flash {
+    0%, 50%, 100% {
+        opacity: 1;
+    }
+    25%, 75% {
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale3d(1, 1, 1);
+    }
+    50% {
+        transform: scale3d(1.05, 1.05, 1.05);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes rubber-band {
+    0% {
+        transform: scale3d(1, 1, 1);
+    }
+    30% {
+        transform: scale3d(1.25, 0.75, 1);
+    }
+    40% {
+        transform: scale3d(0.75, 1.25, 1);
+    }
+    50% {
+        transform: scale3d(1.15, 0.85, 1);
+    }
+    65% {
+        transform: scale3d(0.95, 1.05, 1);
+    }
+    75% {
+        transform: scale3d(1.05, 0.95, 1);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes shake-x {
+    0%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translate3d(-10px, 0, 0);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translate3d(10px, 0, 0);
+    }
+}
+
+@keyframes swing {
+    20% {
+        transform: rotate3d(0, 0, 1, 15deg);
+    }
+    40% {
+        transform: rotate3d(0, 0, 1, -10deg);
+    }
+    60% {
+        transform: rotate3d(0, 0, 1, 5deg);
+    }
+    80% {
+        transform: rotate3d(0, 0, 1, -5deg);
+    }
+    100% {
+        transform: rotate3d(0, 0, 1, 0deg);
+    }
+}
+
+@keyframes tada {
+    0% {
+        transform: scale3d(1, 1, 1);
+    }
+    10%, 20% {
+        transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg);
+    }
+    30%, 50%, 70%, 90% {
+        transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg);
+    }
+    40%, 60%, 80% {
+        transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes wobble {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    15% {
+        transform: translate3d(-25%, 0, 0) rotate3d(0, 0, 1, -5deg);
+    }
+    30% {
+        transform: translate3d(20%, 0, 0) rotate3d(0, 0, 1, 3deg);
+    }
+    45% {
+        transform: translate3d(-15%, 0, 0) rotate3d(0, 0, 1, -3deg);
+    }
+    60% {
+        transform: translate3d(10%, 0, 0) rotate3d(0, 0, 1, 2deg);
+    }
+    75% {
+        transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -1deg);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes jello {
+    0%, 11.1%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    22.2% {
+        transform: skewX(-12.5deg) skewY(-12.5deg);
+    }
+    33.3% {
+        transform: skewX(6.25deg) skewY(6.25deg);
+    }
+    44.4% {
+        transform: skewX(-3.125deg) skewY(-3.125deg);
+    }
+    55.5% {
+        transform: skewX(1.5625deg) skewY(1.5625deg);
+    }
+    66.6% {
+        transform: skewX(-0.78125deg) skewY(-0.78125deg);
+    }
+    77.7% {
+        transform: skewX(0.390625deg) skewY(0.390625deg);
+    }
+    88.8% {
+        transform: skewX(-0.1953125deg) skewY(-0.1953125deg);
+    }
+}
+
+/* ========== 移入动画关键帧 ========== */
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-right {
+    0% {
+        transform: translate3d(100%, 0, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slide-in-left {
+    0% {
+        transform: translate3d(-100%, 0, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slide-in-top {
+    0% {
+        transform: translate3d(0, -100%, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slide-in-bottom {
+    0% {
+        transform: translate3d(0, 100%, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slide-long-right {
+    0% {
+        transform: translate3d(200%, 0, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slide-long-left {
+    0% {
+        transform: translate3d(-200%, 0, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slide-long-top {
+    0% {
+        transform: translate3d(0, -200%, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slide-long-bottom {
+    0% {
+        transform: translate3d(0, 200%, 0);
+        visibility: visible;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes rotate-in {
+    0% {
+        transform: rotate3d(0, 0, 1, -200deg);
+        opacity: 0;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes rotate-cw {
+    0% {
+        transform: rotate3d(0, 0, 1, -360deg) scale3d(0.3, 0.3, 0.3);
+        opacity: 0;
+    }
+    100% {
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+        opacity: 1;
+    }
+}
+
+@keyframes rotate-ccw {
+    0% {
+        transform: rotate3d(0, 0, 1, 360deg) scale3d(0.3, 0.3, 0.3);
+        opacity: 0;
+    }
+    100% {
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+        opacity: 1;
+    }
+}
+
+@keyframes bounce-in {
+    0%, 20%, 40%, 60%, 80%, 100% {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    0% {
+        transform: scale3d(0.3, 0.3, 0.3);
+        opacity: 0;
+    }
+    20% {
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+    40% {
+        transform: scale3d(0.9, 0.9, 0.9);
+    }
+    60% {
+        transform: scale3d(1.03, 1.03, 1.03);
+        opacity: 1;
+    }
+    80% {
+        transform: scale3d(0.97, 0.97, 0.97);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes bounce-in-right {
+    0%, 60%, 75%, 90%, 100% {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    0% {
+        transform: translate3d(300%, 0, 0) scaleX(3);
+        opacity: 0;
+    }
+    60% {
+        transform: translate3d(-25px, 0, 0) scaleX(1);
+        opacity: 1;
+    }
+    75% {
+        transform: translate3d(10px, 0, 0) scaleX(0.98);
+    }
+    90% {
+        transform: translate3d(-5px, 0, 0) scaleX(0.995);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes bounce-in-left {
+    0%, 60%, 75%, 90%, 100% {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    0% {
+        transform: translate3d(-300%, 0, 0) scaleX(3);
+        opacity: 0;
+    }
+    60% {
+        transform: translate3d(25px, 0, 0) scaleX(1);
+        opacity: 1;
+    }
+    75% {
+        transform: translate3d(-10px, 0, 0) scaleX(0.98);
+    }
+    90% {
+        transform: translate3d(5px, 0, 0) scaleX(0.995);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes bounce-in-top {
+    0%, 60%, 75%, 90%, 100% {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    0% {
+        transform: translate3d(0, -300%, 0) scaleY(5);
+        opacity: 0;
+    }
+    60% {
+        transform: translate3d(0, 25px, 0) scaleY(1);
+        opacity: 1;
+    }
+    75% {
+        transform: translate3d(0, -10px, 0) scaleY(0.98);
+    }
+    90% {
+        transform: translate3d(0, 5px, 0) scaleY(0.995);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes bounce-in-bottom {
+    0%, 60%, 75%, 90%, 100% {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    0% {
+        transform: translate3d(0, 300%, 0) scaleY(5);
+        opacity: 0;
+    }
+    60% {
+        transform: translate3d(0, -25px, 0) scaleY(1);
+        opacity: 1;
+    }
+    75% {
+        transform: translate3d(0, 10px, 0) scaleY(0.98);
+    }
+    90% {
+        transform: translate3d(0, -5px, 0) scaleY(0.995);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes speed-in-right {
+    0% {
+        transform: translate3d(100%, 0, 0) skewX(-30deg);
+        opacity: 0;
+    }
+    60% {
+        transform: skewX(20deg);
+        opacity: 1;
+    }
+    80% {
+        transform: skewX(-5deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes speed-in-left {
+    0% {
+        transform: translate3d(-100%, 0, 0) skewX(30deg);
+        opacity: 0;
+    }
+    60% {
+        transform: skewX(-20deg);
+        opacity: 1;
+    }
+    80% {
+        transform: skewX(5deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
 }
