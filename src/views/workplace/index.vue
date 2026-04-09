@@ -171,18 +171,37 @@ const alignBottom = () => {
   }
 }
 
-// 处理键盘删除事件
+// 处理键盘事件
 const handleKeyDown = (e: KeyboardEvent) => {
-  // 1. 判断是否按下了 Delete 或 Backspace
+  // 判断是否正在输入框中
+  const target = e.target as HTMLElement
+  const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA'
+  
+  // Ctrl+Z 撤销
+  if (e.ctrlKey && e.key === 'z' && !e.shiftKey && !isInput) {
+    e.preventDefault()
+    editorStore.undo()
+    return
+  }
+  
+  // Ctrl+Y 或 Ctrl+Shift+Z 重做
+  if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z') && !isInput) {
+    e.preventDefault()
+    editorStore.redo()
+    return
+  }
+  
+  // Delete 或 Backspace 删除组件
   if (e.key === 'Delete' || e.key === 'Backspace') {
-    // 2. 极其关键：判断当前焦点是不是在 input 或 textarea 标签上
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-      return // 如果正在输入文字，直接跳过删除逻辑
+    // 如果正在输入文字，直接跳过删除逻辑
+    if (isInput) {
+      return
     }
 
-    // 3. 如果当前有选中的组件，执行删除
+    // 如果当前有选中的组件，执行删除
     if (editorStore.curComponent) {
+      // 删除前先保存历史
+      editorStore.pushHistory()
       editorStore.removeComponent(editorStore.curComponent.id)
     }
   }
@@ -223,6 +242,21 @@ onMounted(async () => {
     import('../../packages/VRadarChart.vue'),
     import('../../packages/VHeatmapChart.vue'),
     import('../../packages/VTreeChart.vue'),
+    // 表单组件系列
+    import('../../packages/VInput.vue'),
+    import('../../packages/VTextarea.vue'),
+    import('../../packages/VSelect.vue'),
+    import('../../packages/VDatePicker.vue'),
+    import('../../packages/VTimePicker.vue'),
+    import('../../packages/VSlider.vue'),
+    import('../../packages/VSwitch.vue'),
+    import('../../packages/VCheckbox.vue'),
+    import('../../packages/VRadioGroup.vue'),
+    import('../../packages/VButton.vue'),
+    import('../../packages/VBadge.vue'),
+    import('../../packages/VProgress.vue'),
+    import('../../packages/VTabs.vue'),
+    import('../../packages/VPagination.vue'),
   ])
   
   // 批量注册到 Registry（添加中文显示名称、缩略图类型、变体标识）
@@ -254,6 +288,21 @@ onMounted(async () => {
     { name: 'VRadarChart', component: modules[19].default, meta: { icon: '雷达图', category: 'chart', displayName: '雷达图', thumbnail: 'radar', variant: 'default' } },
     { name: 'VHeatmapChart', component: modules[20].default, meta: { icon: '热力图', category: 'chart', displayName: '热力图', thumbnail: 'heatmap', variant: 'default' } },
     { name: 'VTreeChart', component: modules[21].default, meta: { icon: '树形图', category: 'chart', displayName: '树形图', thumbnail: 'tree', variant: 'default' } },
+    // 表单组件系列
+    { name: 'VInput', component: modules[22].default, meta: { icon: '输入框', category: 'form', displayName: '输入框', thumbnail: 'input', variant: 'default' } },
+    { name: 'VTextarea', component: modules[23].default, meta: { icon: '多行文本', category: 'form', displayName: '多行文本框', thumbnail: 'textarea', variant: 'default' } },
+    { name: 'VSelect', component: modules[24].default, meta: { icon: '下拉选择器', category: 'form', displayName: '下拉选择器', thumbnail: 'select', variant: 'default' } },
+    { name: 'VDatePicker', component: modules[25].default, meta: { icon: '日期选择器', category: 'form', displayName: '日期选择器', thumbnail: 'datepicker', variant: 'default' } },
+    { name: 'VTimePicker', component: modules[26].default, meta: { icon: '时间选择器', category: 'form', displayName: '时间选择器', thumbnail: 'timepicker', variant: 'default' } },
+    { name: 'VSlider', component: modules[27].default, meta: { icon: '滑动条', category: 'form', displayName: '滑动条', thumbnail: 'slider', variant: 'default' } },
+    { name: 'VSwitch', component: modules[28].default, meta: { icon: '开关', category: 'form', displayName: '开关', thumbnail: 'switch', variant: 'default' } },
+    { name: 'VCheckbox', component: modules[29].default, meta: { icon: '复选框', category: 'form', displayName: '复选框', thumbnail: 'checkbox', variant: 'default' } },
+    { name: 'VRadioGroup', component: modules[30].default, meta: { icon: '单选按钮组', category: 'form', displayName: '单选按钮组', thumbnail: 'radio', variant: 'default' } },
+    { name: 'VButton', component: modules[31].default, meta: { icon: '按钮', category: 'form', displayName: '按钮', thumbnail: 'button', variant: 'default' } },
+    { name: 'VBadge', component: modules[32].default, meta: { icon: '徽标', category: 'form', displayName: '徽标', thumbnail: 'badge', variant: 'default' } },
+    { name: 'VProgress', component: modules[33].default, meta: { icon: '进度条', category: 'form', displayName: '进度条', thumbnail: 'progress', variant: 'default' } },
+    { name: 'VTabs', component: modules[34].default, meta: { icon: '标签页', category: 'form', displayName: '标签页', thumbnail: 'tabs', variant: 'default' } },
+    { name: 'VPagination', component: modules[35].default, meta: { icon: '分页器', category: 'form', displayName: '分页器', thumbnail: 'pagination', variant: 'default' } },
   ])
   
   // 恢复自定义组件并等待注册完成
@@ -276,6 +325,9 @@ onMounted(async () => {
       console.error('加载保存数据失败:', e)
     }
   }
+  
+  // 初始化历史记录
+  editorStore.pushHistory()
 })
 
 // 离开页面时销毁监听
@@ -446,6 +498,8 @@ const handleResizeMouseDown = (e:MouseEvent,point:string,item:any) => {
     }
 
     const up = () =>{
+        // 缩放结束时保存历史记录
+        editorStore.pushHistory()
         document.removeEventListener('mousemove',move)
         document.removeEventListener('mouseup',up)
     }
@@ -490,6 +544,8 @@ const handleMouseDown = (e:MouseEvent,item:any) => {
 
     //定义鼠标松开时的函数
     const up = () =>{
+        // 鼠标松开时保存历史记录（记录拖拽后的位置）
+        editorStore.pushHistory()
         //鼠标松开，卸载事件监听，结束拖拽
         document.removeEventListener('mousemove',move)
         document.removeEventListener('mouseup',up)
@@ -555,6 +611,8 @@ const handleDrop = (e: DragEvent) => {
   }
 
   // 把这个JSON丢给pinia的数据中心
+  // 添加前先保存历史
+  editorStore.pushHistory()
   editorStore.addComponent(newComponent)
 }
 
@@ -567,7 +625,29 @@ const handleDrop = (e: DragEvent) => {
          <header class="header">
             <div class="logo"> My Go-View </div>
             <div class="actions">
-                <!-- 以后这里放撤销重做保存预览等按钮 -->
+                <!-- 撤销/重做按钮 -->
+                 <button 
+                   class="btn icon-btn" 
+                   :disabled="!editorStore.canUndo" 
+                   @click="editorStore.undo()"
+                   title="撤销 (Ctrl+Z)"
+                 >
+                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                     <polyline points="9 14 4 9 9 4"/>
+                     <path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+                   </svg>
+                 </button>
+                 <button 
+                   class="btn icon-btn" 
+                   :disabled="!editorStore.canRedo" 
+                   @click="editorStore.redo()"
+                   title="重做 (Ctrl+Y)"
+                 >
+                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                     <polyline points="15 14 20 9 15 4"/>
+                     <path d="M4 20v-7a4 4 0 0 1 4-4h12"/>
+                   </svg>
+                 </button>
                  <button class="btn" @click="goToPreview">预览</button>
                  <button class="btn primary" @click="saveData">保存</button>
             </div>
@@ -616,6 +696,18 @@ const handleDrop = (e: DragEvent) => {
                       <line x1="12" y1="4" x2="12" y2="20"/>
                     </svg>
                     <span>文本</span>
+                  </div>
+                  <div 
+                    class="nav-item" 
+                    :class="{ active: activeCategory === 'form' }"
+                    @click="activeCategory = 'form'"
+                  >
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <line x1="3" y1="9" x2="21" y2="9"/>
+                      <line x1="9" y1="21" x2="9" y2="9"/>
+                    </svg>
+                    <span>控件</span>
                   </div>
                 </div>
                 

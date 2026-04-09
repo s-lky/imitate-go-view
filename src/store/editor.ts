@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { ComponentDataConfig, EditorComponent } from '../types/component'
 
 export const defaultBarChartConfig = {
@@ -25,6 +25,11 @@ export const useEidtorStore = defineStore('editor',()=>{
     const componentData = ref<Array<EditorComponent>>([])
     // 当前选中的组件
     const curComponent = ref<EditorComponent | null>(null)
+
+    // 历史记录管理
+    const history = ref<Array<Array<EditorComponent>>>([])
+    const historyIndex = ref(-1)
+    const MAX_HISTORY_SIZE = 50
 
     const canvasConfig = ref({
         width: 1920,
@@ -64,6 +69,53 @@ export const useEidtorStore = defineStore('editor',()=>{
         componentData.value = data
     }
 
+    // 保存历史快照
+    const pushHistory = () => {
+        const snapshot = JSON.parse(JSON.stringify(componentData.value))
+        // 如果不在历史末尾（撤销后又做了新操作），删除后面的记录
+        if (historyIndex.value < history.value.length - 1) {
+            history.value.splice(historyIndex.value + 1)
+        }
+        history.value.push(snapshot)
+        // 限制历史记录数量
+        if (history.value.length > MAX_HISTORY_SIZE) {
+            history.value.shift()
+        }
+        historyIndex.value = history.value.length - 1
+    }
+
+    // 撤销操作
+    const undo = () => {
+        if (canUndo.value) {
+            historyIndex.value--
+            componentData.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]))
+            // 清空选中状态
+            curComponent.value = null
+        }
+    }
+
+    // 重做操作
+    const redo = () => {
+        if (canRedo.value) {
+            historyIndex.value++
+            componentData.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]))
+            // 清空选中状态
+            curComponent.value = null
+        }
+    }
+
+    // 是否可以撤销
+    const canUndo = computed(() => historyIndex.value > 0)
+
+    // 是否可以重做
+    const canRedo = computed(() => historyIndex.value < history.value.length - 1)
+
+    // 清空历史记录
+    const clearHistory = () => {
+        history.value = []
+        historyIndex.value = -1
+    }
+
     return{
         componentData,
         curComponent,
@@ -73,5 +125,14 @@ export const useEidtorStore = defineStore('editor',()=>{
         setCurComponent,
         clearCanvas,
         setComponentData,
+        // 历史记录相关
+        history,
+        historyIndex,
+        pushHistory,
+        undo,
+        redo,
+        canUndo,
+        canRedo,
+        clearHistory,
     }
 })

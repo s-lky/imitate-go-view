@@ -325,6 +325,209 @@
     background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
 }
 
+/* 表单组件占位符 */
+
+/* 输入框占位符 */
+.component-thumbnail.input::before {
+    width: 60%;
+    height: 12px;
+    border: 2px solid rgba(0, 229, 255, 0.5);
+    border-radius: 3px;
+    background: transparent;
+}
+
+/* 多行文本框占位符 */
+.component-thumbnail.textarea::before {
+    width: 60%;
+    height: 24px;
+    border: 2px solid rgba(0, 229, 255, 0.5);
+    border-radius: 3px;
+    background: transparent;
+}
+
+/* 下拉选择器占位符 */
+.component-thumbnail.select::before {
+    width: 60%;
+    height: 12px;
+    border: 2px solid rgba(255, 107, 107, 0.5);
+    border-radius: 3px;
+    background: transparent;
+}
+
+.component-thumbnail.select::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid rgba(255, 107, 107, 0.8);
+    top: 55%;
+    right: 22%;
+}
+
+/* 日期选择器占位符 */
+.component-thumbnail.datepicker::before {
+    width: 60%;
+    height: 12px;
+    border: 2px solid rgba(78, 205, 196, 0.5);
+    border-radius: 3px;
+    background: transparent;
+}
+
+.component-thumbnail.datepicker::after {
+    content: '📅';
+    position: absolute;
+    font-size: 12px;
+    top: 50%;
+    right: 20%;
+    transform: translateY(-50%);
+}
+
+/* 时间选择器占位符 */
+.component-thumbnail.timepicker::before {
+    width: 60%;
+    height: 12px;
+    border: 2px solid rgba(78, 205, 196, 0.5);
+    border-radius: 3px;
+    background: transparent;
+}
+
+.component-thumbnail.timepicker::after {
+    content: '🕐';
+    position: absolute;
+    font-size: 12px;
+    top: 50%;
+    right: 20%;
+    transform: translateY(-50%);
+}
+
+/* 滑动条占位符 */
+.component-thumbnail.slider::before {
+    width: 60%;
+    height: 4px;
+    background: linear-gradient(90deg, #00e5ff 0%, #00e5ff 60%, #444 60%);
+    border-radius: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.component-thumbnail.slider::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #00e5ff;
+    border-radius: 50%;
+    top: 50%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+}
+
+/* 开关占位符 */
+.component-thumbnail.switch::before {
+    width: 36px;
+    height: 18px;
+    background: linear-gradient(90deg, #00e5ff 0%, #00e5ff 55%, #444 55%);
+    border-radius: 9px;
+}
+
+.component-thumbnail.switch::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    top: 50%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+}
+
+/* 复选框占位符 */
+.component-thumbnail.checkbox::before {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(0, 229, 255, 0.8);
+    border-radius: 3px;
+    background: rgba(0, 229, 255, 0.2);
+}
+
+.component-thumbnail.checkbox::after {
+    content: '✓';
+    position: absolute;
+    color: #00e5ff;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 单选按钮占位符 */
+.component-thumbnail.radio::before {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 107, 107, 0.8);
+    border-radius: 50%;
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.component-thumbnail.radio::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 按钮占位符 */
+.component-thumbnail.button::before {
+    width: 60%;
+    height: 16px;
+    background: linear-gradient(135deg, #00e5ff 0%, #0066ff 100%);
+    border-radius: 4px;
+}
+
+/* 徽标占位符 */
+.component-thumbnail.badge::before {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+    border-radius: 12px;
+}
+
+/* 进度条占位符 */
+.component-thumbnail.progress::before {
+    width: 60%;
+    height: 8px;
+    background: linear-gradient(90deg, #00e5ff 0%, #00e5ff 60%, #444 60%);
+    border-radius: 4px;
+}
+
+/* 标签页占位符 */
+.component-thumbnail.tabs::before {
+    width: 70%;
+    height: 12px;
+    background: linear-gradient(90deg, #00e5ff 0%, #00e5ff 33%, #444 33%, #444 66%, #888 66%);
+    border-radius: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* 分页器占位符 */
+.component-thumbnail.pagination::before {
+    width: 70%;
+    height: 12px;
+    background: linear-gradient(90deg, #444 0%, #444 20%, #00e5ff 20%, #00e5ff 40%, #444 40%, #444 60%, #444 80%, #444 100%);
+    border-radius: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .placeholder-icon {
     width: 24px;
     height: 24px;
@@ -768,6 +971,42 @@
     background-color: #00e5ff; color: #000; font-weight: bold; border: none;
 }
 .workspace-container .btn:hover{opacity: 0.8;}
+
+/* 撤销/重做图标按钮 */
+.workspace-container .icon-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid #444;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+    flex-shrink: 0;
+    min-height: 36px;
+    box-sizing: border-box;
+}
+
+.workspace-container .icon-btn:hover:not(:disabled) {
+    background: #333;
+    border-color: #00e5ff;
+    color: #00e5ff;
+}
+
+.workspace-container .icon-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.workspace-container .icon-btn svg {
+    stroke: currentColor;
+    display: block;
+}
+
 .workspace-container .delete-icon{
     position: absolute; top: -10px; right: -10px;
     width: 20px; height: 20px; background-color: #ff4d4f;

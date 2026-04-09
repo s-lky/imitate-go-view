@@ -24,6 +24,21 @@ import VAreaChart from '../../packages/VAreaChart.vue'
 import VRadarChart from '../../packages/VRadarChart.vue'
 import VHeatmapChart from '../../packages/VHeatmapChart.vue'
 import VTreeChart from '../../packages/VTreeChart.vue'
+// 导入表单组件
+import VInput from '../../packages/VInput.vue'
+import VTextarea from '../../packages/VTextarea.vue'
+import VSelect from '../../packages/VSelect.vue'
+import VDatePicker from '../../packages/VDatePicker.vue'
+import VTimePicker from '../../packages/VTimePicker.vue'
+import VSlider from '../../packages/VSlider.vue'
+import VSwitch from '../../packages/VSwitch.vue'
+import VCheckbox from '../../packages/VCheckbox.vue'
+import VRadioGroup from '../../packages/VRadioGroup.vue'
+import VButton from '../../packages/VButton.vue'
+import VBadge from '../../packages/VBadge.vue'
+import VProgress from '../../packages/VProgress.vue'
+import VTabs from '../../packages/VTabs.vue'
+import VPagination from '../../packages/VPagination.vue'
 import type { ComponentDataConfig } from '../../types/component'
 import './index.css' // 导入独立的 CSS 文件
 import '../workplace/index.css' // 导入动画样式
@@ -35,7 +50,9 @@ const componentMap: Record<string, any> = {
   VLineChart, VLineChartSmooth, VLineChartArea,
   VPieChart, VPieChartMulti, VPieChartDonut,
   VText, VTextGradient, VTextScroll,
-  VScatterChart, VWordCloud, VFunnelChart, VAreaChart, VRadarChart, VHeatmapChart, VTreeChart
+  VScatterChart, VWordCloud, VFunnelChart, VAreaChart, VRadarChart, VHeatmapChart, VTreeChart,
+  // 表单组件
+  VInput, VTextarea, VSelect, VDatePicker, VTimePicker, VSlider, VSwitch, VCheckbox, VRadioGroup, VButton, VBadge, VProgress, VTabs, VPagination
 }
 
 const componentData = ref<any[]>([])
