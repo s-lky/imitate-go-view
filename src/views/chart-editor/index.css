@@ -469,6 +469,203 @@
   justify-content: center;
 }
 
+/* 导入面板样式 */
+.import-panel {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.import-steps {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background: #f5f7fa;
+  border-radius: 8px;
+}
+
+.chart-editor-container.dark-theme .import-steps {
+  background: #2a2b2c;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #00e5ff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #303133;
+}
+
+.chart-editor-container.dark-theme .step-label {
+  color: #ccc;
+}
+
+.step-desc {
+  font-size: 12px;
+  color: #909399;
+}
+
+.chart-editor-container.dark-theme .step-desc {
+  color: #666;
+}
+
+.step-connector {
+  width: 40px;
+  height: 2px;
+  background: #dcdfe6;
+  margin-top: -20px;
+}
+
+.chart-editor-container.dark-theme .step-connector {
+  background: #555;
+}
+
+.import-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-download,
+.btn-upload {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid;
+  font-weight: 500;
+}
+
+.btn-download {
+  background: #ecf5ff;
+  border-color: #409eff;
+  color: #409eff;
+}
+
+.btn-download:hover {
+  background: #409eff;
+  color: #fff;
+}
+
+.btn-upload {
+  background: #f0f9ff;
+  border-color: #00e5ff;
+  color: #00e5ff;
+}
+
+.btn-upload:hover {
+  background: #00e5ff;
+  color: #fff;
+}
+
+/* 设置面板样式 */
+.settings-panel {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.settings-group {
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.chart-editor-container.dark-theme .settings-group {
+  background: #2a2b2c;
+}
+
+.settings-group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #00e5ff;
+}
+
+.chart-editor-container.dark-theme .settings-group-title {
+  color: #ccc;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.settings-row:last-child {
+  margin-bottom: 0;
+}
+
+.settings-row label {
+  min-width: 60px;
+  font-size: 13px;
+  color: #606266;
+}
+
+.chart-editor-container.dark-theme .settings-row label {
+  color: #999;
+}
+
+.settings-row input[type="text"],
+.settings-row select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background: #fff;
+  color: #303133;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chart-editor-container.dark-theme .settings-row input[type="text"],
+.chart-editor-container.dark-theme .settings-row select {
+  background: #333;
+  border-color: #555;
+  color: #ccc;
+}
+
+.settings-row input[type="text"]:focus,
+.settings-row select:focus {
+  border-color: #00e5ff;
+}
+
+.settings-row input[type="text"]:hover,
+.settings-row select:hover {
+  border-color: #00e5ff;
+}
+
 /* 响应式设计 */
 @media (max-width: 1200px) {
   .data-editor-area {

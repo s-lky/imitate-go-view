@@ -10,14 +10,14 @@
             :class="{ active: chartType === 'bar' }"
             @click="switchChartType('bar')"
           >
-            📊 柱状图
+            柱状图
           </button>
           <button 
             class="type-btn" 
             :class="{ active: chartType === 'line' }"
             @click="switchChartType('line')"
           >
-            📈 折线图
+            折线图
           </button>
         </div>
       </div>
@@ -57,9 +57,9 @@
       <div class="data-editor-area">
         <div class="data-editor-header">
           <div class="editor-tabs">
-            <button class="tab-btn active">数据</button>
-            <button class="tab-btn">导入</button>
-            <button class="tab-btn">设置</button>
+            <button class="tab-btn" :class="{ active: activeTab === 'data' }" @click="switchTab('data')">数据</button>
+            <button class="tab-btn" :class="{ active: activeTab === 'import' }" @click="switchTab('import')">导入</button>
+            <button class="tab-btn" :class="{ active: activeTab === 'settings' }" @click="switchTab('settings')">设置</button>
           </div>
           <div class="editor-actions">
             <button class="btn-small" @click="clearData">清空</button>
@@ -67,7 +67,8 @@
           </div>
         </div>
         
-        <div class="excel-table-wrapper">
+        <!-- 数据标签页内容 -->
+        <div v-if="activeTab === 'data'" class="excel-table-wrapper">
           <table class="excel-table">
             <thead>
               <tr>
@@ -118,6 +119,99 @@
             <button class="btn-small" @click="removeColumn" :disabled="columnCount <= 2">- 删除列</button>
           </div>
         </div>
+        
+        <!-- 导入标签页内容 -->
+        <div v-if="activeTab === 'import'" class="import-panel">
+          <div class="import-steps">
+            <div class="step">
+              <span class="step-number">1</span>
+              <span class="step-label">下载模板</span>
+              <span class="step-desc">使用Excel打开</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+              <span class="step-number">2</span>
+              <span class="step-label">填数据</span>
+              <span class="step-desc">编辑你的数据</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+              <span class="step-number">3</span>
+              <span class="step-label">拖拽到这</span>
+              <span class="step-desc">或点击导入</span>
+            </div>
+          </div>
+          
+          <div class="import-actions">
+            <button class="btn-download" @click="downloadTemplate">
+              📥 下载模板
+            </button>
+            <button class="btn-upload" @click="triggerFileInput">
+              📤 选择文件导入
+            </button>
+          </div>
+          
+          <input 
+            ref="fileInputRef"
+            type="file" 
+            accept=".xlsx,.xls,.csv"
+            @change="handleFileImport"
+            style="display: none"
+          />
+        </div>
+        
+        <!-- 设置标签页内容 -->
+        <div v-if="activeTab === 'settings'" class="settings-panel">
+          <div class="settings-group">
+            <h4 class="settings-group-title">标题</h4>
+            <div class="settings-row">
+              <label>主标题</label>
+              <input v-model="chartTitle" type="text" placeholder="请输入标题" />
+            </div>
+            <div class="settings-row">
+              <label>字体大小</label>
+              <select v-model="titleFontSize">
+                <option :value="12">12号</option>
+                <option :value="14">14号</option>
+                <option :value="16">16号</option>
+                <option :value="18">18号</option>
+                <option :value="20">20号</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="settings-group">
+            <h4 class="settings-group-title">X轴</h4>
+            <div class="settings-row">
+              <label>名称</label>
+              <input v-model="xAxisName" type="text" placeholder="例如：时间" />
+            </div>
+            <div class="settings-row">
+              <label>字体大小</label>
+              <select v-model="xAxisFontSize">
+                <option :value="12">12号</option>
+                <option :value="14">14号</option>
+                <option :value="16">16号</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h4 class="settings-group-title">Y轴</h4>
+            <div class="settings-row">
+              <label>名称</label>
+              <input v-model="yAxisName" type="text" placeholder="例如：数量" />
+            </div>
+            <div class="settings-row">
+              <label>字体大小</label>
+              <select v-model="yAxisFontSize">
+                <option :value="12">12号</option>
+                <option :value="14">14号</option>
+                <option :value="16">16号</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -128,6 +222,7 @@ import { ref, onMounted, onBeforeUnmount, watch, nextTick, markRaw, computed } f
 import * as echarts from 'echarts'
 import { useResizeObserver } from '@vueuse/core'
 import { useRouter } from 'vue-router'
+import * as XLSX from 'xlsx'
 import './index.css' // 导入样式
 
 const router = useRouter()
@@ -141,6 +236,12 @@ const toggleTheme = () => {
   // 更新图表样式
   updateChart()
 }
+
+// 右侧面板标签页
+const activeTab = ref<'data' | 'import' | 'settings'>('data')
+
+// 隐藏的文件输入框
+const fileInputRef = ref<HTMLInputElement | null>(null)
 
 // 图表类型
 const chartType = ref<'bar' | 'line'>('bar')
@@ -166,6 +267,13 @@ const rowData = ref([
   ['88', '64'],
   ['80', '75']
 ])
+
+// 设置相关变量
+const xAxisName = ref('')
+const yAxisName = ref('')
+const titleFontSize = ref(16)
+const xAxisFontSize = ref(14)
+const yAxisFontSize = ref(14)
 
 // 返回主页
 const goBack = () => {
@@ -214,8 +322,9 @@ const getChartOption = () => {
     title: {
       text: chartTitle.value,
       left: 'center',
+      top: 10,
       textStyle: {
-        fontSize: 16,
+        fontSize: titleFontSize.value,
         color: isDarkMode.value ? '#fff' : '#333'
       }
     },
@@ -241,6 +350,11 @@ const getChartOption = () => {
     },
     xAxis: {
       type: 'category',
+      name: xAxisName.value,
+      nameTextStyle: {
+        fontSize: xAxisFontSize.value,
+        color: isDarkMode.value ? '#ccc' : '#666'
+      },
       data: xAxisData,
       axisLabel: {
         color: isDarkMode.value ? '#ccc' : '#666'
@@ -253,6 +367,11 @@ const getChartOption = () => {
     },
     yAxis: {
       type: 'value',
+      name: yAxisName.value,
+      nameTextStyle: {
+        fontSize: yAxisFontSize.value,
+        color: isDarkMode.value ? '#ccc' : '#666'
+      },
       axisLabel: {
         color: isDarkMode.value ? '#ccc' : '#666'
       },
@@ -279,7 +398,7 @@ const updateChart = () => {
 }
 
 // 监听数据变化自动更新图表
-watch([chartType, chartTitle, columnCount, columnHeaders, rowHeaders, rowData], () => {
+watch([chartType, chartTitle, columnCount, columnHeaders, rowHeaders, rowData, xAxisName, yAxisName, titleFontSize, xAxisFontSize, yAxisFontSize], () => {
   updateChart()
 }, { deep: true })
 
@@ -367,6 +486,125 @@ const removeColumn = () => {
       row.pop()
     })
   }
+}
+
+// 切换标签页
+const switchTab = (tab: 'data' | 'import' | 'settings') => {
+  activeTab.value = tab
+}
+
+// 下载Excel模板
+const downloadTemplate = () => {
+  // 创建工作簿
+  const wb = XLSX.utils.book_new()
+  
+  // 准备表头数据
+  const headers = [['', '分类一', '分类二']]
+  
+  // 准备示例数据
+  const data = [
+    ['2017', '55', '76'],
+    ['2018', '65', '49'],
+    ['2019', '80', '71'],
+    ['2020', '46', '65'],
+    ['2021', '44', '58'],
+    ['2022', '71', '31'],
+    ['2023', '88', '64'],
+    ['2024', '80', '75']
+  ]
+  
+  // 合并表头和数据
+  const worksheetData = [...headers, ...data]
+  
+  // 创建工作表
+  const ws = XLSX.utils.aoa_to_sheet(worksheetData)
+  
+  // 设置列宽
+  ws['!cols'] = [
+    { wch: 15 }, // 第一列（年份）
+    { wch: 15 }, // 分类一
+    { wch: 15 }  // 分类二
+  ]
+  
+  // 将工作表添加到工作簿
+  XLSX.utils.book_append_sheet(wb, ws, '图表数据')
+  
+  // 生成Excel文件并下载
+  XLSX.writeFile(wb, '图表数据模板.xlsx')
+}
+
+// 触发文件选择
+const triggerFileInput = () => {
+  fileInputRef.value?.click()
+}
+
+// 处理文件导入
+const handleFileImport = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  if (!file) return
+  
+  const reader = new FileReader()
+  
+  reader.onload = (e) => {
+    try {
+      const data = e.target?.result
+      const workbook = XLSX.read(data, { type: 'array' })
+      
+      // 获取第一个工作表
+      const firstSheetName = workbook.SheetNames[0]
+      const worksheet = workbook.Sheets[firstSheetName]
+      
+      // 将工作表转换为JSON（数组格式）
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][]
+      
+      if (jsonData.length === 0) {
+        alert('Excel文件为空，请检查文件内容')
+        return
+      }
+      
+      // 解析表头（第一行）
+      const headerRow = jsonData[0] || []
+      const newColumnHeaders = headerRow.map((h: any) => String(h || ''))
+      
+      // 解析数据行（从第二行开始）
+      const dataRows = jsonData.slice(1).filter((row: any[]) => row.length > 0 && row[0] !== undefined && row[0] !== '')
+      
+      if (dataRows.length === 0) {
+        alert('Excel文件没有有效数据行')
+        return
+      }
+      
+      // 提取行标题（第一列）和数据
+      const newRowHeaders: string[] = []
+      const newRowData: string[][] = []
+      
+      dataRows.forEach((row: any[]) => {
+        newRowHeaders.push(String(row[0] || ''))
+        newRowData.push(row.slice(1).map((cell: any) => String(cell || '0')))
+      })
+      
+      // 更新数据
+      columnHeaders.value = newColumnHeaders
+      rowHeaders.value = newRowHeaders
+      rowData.value = newRowData
+      columnCount.value = newColumnHeaders.length
+      
+      // 切换到数据标签页
+      activeTab.value = 'data'
+      
+      alert('Excel数据导入成功！')
+    } catch (error) {
+      console.error('导入Excel文件失败:', error)
+      alert('导入失败，请检查文件格式是否正确')
+    }
+  }
+  
+  reader.readAsArrayBuffer(file)
+  
+  // 清空文件输入框，允许重复选择同一文件
+  target.value = ''
 }
 
 // 清空数据
